@@ -22,7 +22,7 @@ local function wifi_start(list_aps, callback)
         for key,value in pairs(list_aps) do
             if config.SSID and config.SSID[key] then
                 wifi.setmode(wifi.STATION);
-                wifi.sta.config(key,config.SSID[key])
+                wifi.sta.config {ssid=key,pwd=config.SSID[key]}
                 wifi.sta.connect()
                 disp.message("... " .. key)
 
@@ -43,7 +43,7 @@ function module.start(callback)
   wifi.sta.getap(function(aps) wifi_start(aps, callback) end)
 
   -- reconnect
-  wifi.sta.eventMonReg(wifi.STA_CONNECTING, function(previous_State)
+  wifi.eventmon.register(wifi.eventmon.STA_DISCONNECTED, function(previous_State)
     if(previous_State==wifi.STA_GOTIP) then
       print("Station lost connection with access point\n\tAttempting to reconnect...")
     else
